@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link rel='stylesheet' href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css' />
+<style>
+  #map { height:100vh; width:100%; }
+  #info { position:absolute; top:10px; right:10px; z-index:1000;
+    background:white; padding:10px 14px; border-radius:8px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.25); font:13px/1.5 sans-serif; max-width:260px; }
+  .dot-bgt { background:#e63946; border:2px solid #fff;
+    border-radius:50%; width:12px; height:12px; box-shadow:0 1px 4px rgba(0,0,0,0.4); }
+  .afstand-label { background:rgba(230,57,70,0.9); color:white;
+    padding:2px 7px; border-radius:10px;
+    font:bold 12px sans-serif; white-space:nowrap;
+    border:1px solid rgba(255,255,255,0.6); }
+  #fout { display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    background:white; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.3);
+    font:14px sans-serif; color:#c00; text-align:center; z-index:2000; max-width:400px; }
+</style>
+</head>
+<body>
+<div id='map'></div>
+<div id='info'><b id='adrestekst'>BGT-zijtuin</b><br>
+  <span style='color:#e63946'>&#9644;</span> BGT-zijtuin
+</div>
+<div id='fout'></div>
+
+<script src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'></script>
+<script>
+// Coördinaten uit de bestandsnaam lezen
+// Verwacht formaat: kaart_sx_650141.0186_sy_6786350.31_ex_650143.3348_ey_6786344.044_adres_Radeckerstraat 35.html
+var filename = window.location.pathname.split('/').pop();
+filename = decodeURIComponent(filename).replace('.html', '');
+
+function getVal(str, key) {
+  var re = new RegExp(key + '_([0-9\\.\\-]+)');
+  var m = str.match(re);
+  return m ? parseFloat(m[1]) : NaN;
+}
+
+function getAdres(str) {
+  var m = str.match(/_adres_(.+)$/);
+  return m ? m[1] : '';
+}
+
+var sx = getVal(filename, 'sx');
+var sy = getVal(filename, 'sy');
+var ex = getVal(filename, 'ex');
+var ey = getVal(filename, 'ey');
+var adres = getAdres(filename);
+
+if (isNaN(sx) || isNaN(sy) || isNaN(ex) || isNaN(ey)) {
+  document.getElementById('fout').innerHTML =
+    'Bestandsnaam niet herkend.<br><small>' + filename + '</small>';
+  document.getElementById('fout').style.display = 'block';
+} else {
+  if (adres) document.getElementById('adrestekst').textContent = adres;
+
+  var map = L.map('map');
+  L.tileLayer(
+    'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.jpeg',
+    {maxZoom:21, attribution:'&copy; PDOK / Kadaster'}
+  ).addTo(map);
+
+  var p1 = L.CRS.EPSG3857.unproject(L.point(sx, sy));
+  var p2 = L.CRS.EPSG3857.unproject(L.point(ex, ey));
+
+  var bgtIcon = L.divIcon({className:'dot-bgt', iconSize:[12,12], iconAnchor:[6,6]});
+  L.marker(p1, {icon:bgtIcon}).addTo(map).bindPopup('BGT start');
+  L.marker(p2, {icon:bgtIcon}).addTo(map).bindPopup('BGT eind');
+  var lijn = L.polyline([p1, p2], {color:'#e63946', weight:5}).addTo(map);
+
+  var afstand = map.distance(p1, p2);
+  var afstandTekst = afstand < 10 ? afstand.toFixed(1)+' m' : Math.round(afstand)+' m';
+  L.marker(lijn.getCenter(), {
+    icon: L.divIcon({className:'afstand-label', html:afstandTekst, iconAnchor:[20,-6]}),
+    interactive: false
+  }).addTo(map);
+
+  var bounds = L.latLngBounds([p1, p2]);
+  var center = bounds.getCenter();
+  bounds.extend(L.latLng(center.lat-0.0003, center.lng-0.0005));
+  bounds.extend(L.latLng(center.lat+0.0003, center.lng+0.0005));
+  map.fitBounds(bounds, {padding:[60,60], maxZoom:19});
+}
+</script>
+</body>
+</html>
