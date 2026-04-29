@@ -16,19 +16,47 @@
       right:10px;
       z-index:1000;
       background:white;
-      padding:8px 12px;
+      padding:10px 12px;
       border-radius:6px;
       box-shadow:0 2px 6px rgba(0,0,0,0.3);
       font:13px sans-serif;
-      max-width:260px;
+      max-width:280px;
+      line-height:1.4;
     }
 
-    .dot-bgt {
+    /* klein startpunt */
+    .dot-start {
+      background:#1d3557;
+      border:2px solid #fff;
+      border-radius:50%;
+      width:8px;
+      height:8px;
+    }
+
+    /* eindpunt (groter accent) */
+    .dot-end {
       background:#e63946;
       border:2px solid #fff;
       border-radius:50%;
       width:12px;
       height:12px;
+    }
+
+    /* pijltje */
+    .arrow-icon {
+      width:0;
+      height:0;
+      border-left:8px solid transparent;
+      border-right:8px solid transparent;
+      border-top:14px solid #e63946;
+    }
+
+    .label {
+      background: rgba(255,255,255,0.9);
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      border: 1px solid #ccc;
     }
   </style>
 </head>
@@ -39,8 +67,9 @@
 <div id="info">Laden...</div>
 
 <script>
+
 /* =========================
-   1. PARAMETERS UIT URL
+   DATA
 ========================= */
 
 const params = new URLSearchParams(window.location.search);
@@ -49,20 +78,22 @@ var sx = Number(params.get("sx"));
 var sy = Number(params.get("sy"));
 var ex = Number(params.get("ex"));
 var ey = Number(params.get("ey"));
-var adres = params.get("adres") || "Onbekend adres";
 
-/* =========================
-   2. VALIDATIE
-========================= */
+var adres = params.get("adres") || "onbekend";
+var plaats = params.get("plaats") || "-";
+var lengte = params.get("lengte") || "-";
+var bron = params.get("bron") || "-";
+var score = params.get("score") || "-";
 
-if ([sx, sy, ex, ey].some(v => Number.isNaN(v))) {
+/* safety */
+if ([sx, sy, ex, ey].some(v => isNaN(v))) {
   document.getElementById("info").innerHTML =
-    "❌ Ongeldige of ontbrekende coördinaten";
-  throw new Error("Invalid coordinates");
+    "❌ Ongeldige coördinaten";
+  throw new Error("Invalid coords");
 }
 
 /* =========================
-   3. MAP INIT
+   MAP
 ========================= */
 
 var map = L.map('map').setView([52.1, 5.1], 10);
@@ -76,59 +107,72 @@ L.tileLayer(
 ).addTo(map);
 
 /* =========================
-   4. PUNTEN MAKEN
+   POINTS
 ========================= */
 
 var p1 = L.CRS.EPSG3857.unproject(L.point(sx, sy));
 var p2 = L.CRS.EPSG3857.unproject(L.point(ex, ey));
 
-/* extra safety check */
-if (!p1 || !p2) {
-  document.getElementById("info").innerHTML =
-    "❌ Fout bij berekenen punten";
-  throw new Error("Invalid points");
-}
-
-/* =========================
-   5. ICON
-========================= */
-
-var bgtIcon = L.divIcon({
-  className: 'dot-bgt',
-  iconSize: [12, 12],
-  iconAnchor: [6, 6]
+/* START (klein punt) */
+var startIcon = L.divIcon({
+  className: 'dot-start'
 });
 
-/* =========================
-   6. MARKERS + LIJN
-========================= */
+/* EINDE (pijltje) */
+var arrowIcon = L.divIcon({
+  className: 'arrow-icon'
+});
 
-L.marker(p1, {icon: bgtIcon}).addTo(map).bindPopup('BGT start');
-L.marker(p2, {icon: bgtIcon}).addTo(map).bindPopup('BGT eind');
+/* markers */
+L.marker(p1, {icon: startIcon}).addTo(map).bindPopup('Start meting');
 
-L.polyline([p1, p2], {
+L.marker(p2, {
+  icon: arrowIcon,
+  rotationAngle: 0
+}).addTo(map).bindPopup('Einde meting');
+
+/* lijn */
+var line = L.polyline([p1, p2], {
   color: '#e63946',
-  weight: 5
+  weight: 4
 }).addTo(map);
 
 /* =========================
-   7. ZOOM
+   AFSTAND LABEL
 ========================= */
 
-var bounds = L.latLngBounds([p1, p2]);
+var mid = line.getCenter();
 
-map.fitBounds(bounds, {
+var afstandLabel = L.marker(mid, {
+  icon: L.divIcon({
+    className: 'label',
+    html: lengte + ' m'
+  })
+}).addTo(map);
+
+/* =========================
+   ZOOM
+========================= */
+
+map.fitBounds(L.latLngBounds([p1, p2]), {
   padding: [60, 60],
   maxZoom: 22
 });
 
 /* =========================
-   8. INFO BOX
+   INFO PANEL
 ========================= */
 
 document.getElementById("info").innerHTML =
-  "<b>" + adres + "</b><br>" +
-  "<span style='color:#e63946'>&#9644;</span> BGT lijn";
+`
+<b>Meting</b><br><br>
+
+<b>Adres:</b> ${adres}<br>
+<b>Plaats:</b> ${plaats}<br>
+<b>Lengte:</b> ${lengte} m<br>
+<b>Bron:</b> ${bron}<br>
+<b>Betrouwbaarheid:</b> ${score}<br>
+`;
 
 </script>
 
