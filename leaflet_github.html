@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Kaart viewer</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    #map { height:100vh; width:100%; }
+
+    #info {
+      position:absolute;
+      top:10px;
+      right:10px;
+      z-index:1000;
+      background:white;
+      padding:8px 12px;
+      border-radius:6px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.3);
+      font:13px sans-serif;
+      max-width:260px;
+    }
+
+    .dot-bgt {
+      background:#e63946;
+      border:2px solid #fff;
+      border-radius:50%;
+      width:12px;
+      height:12px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="map"></div>
+<div id="info"></div>
+
+<script>
+/* =========================
+   PARAMS UIT URL
+========================= */
+
+const params = new URLSearchParams(window.location.search);
+
+var sx = parseFloat(params.get("sx"));
+var sy = parseFloat(params.get("sy"));
+var ex = parseFloat(params.get("ex"));
+var ey = parseFloat(params.get("ey"));
+var adres = params.get("adres") || "";
+
+if (isNaN(sx) || isNaN(sy) || isNaN(ex) || isNaN(ey)) {
+  document.getElementById("info").innerHTML =
+    "<b>Fout:</b> geen of ongeldige parameters";
+  throw new Error("Missing data");
+}
+
+/* =========================
+   MAP
+========================= */
+
+var map = L.map('map');
+
+L.tileLayer(
+  'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.jpeg',
+  {
+    maxZoom:22,
+    attribution:'© PDOK / Kadaster'
+  }
+).addTo(map);
+
+/* =========================
+   PUNTEN
+========================= */
+
+var p1 = L.CRS.EPSG3857.unproject(L.point(sx, sy));
+var p2 = L.CRS.EPSG3857.unproject(L.point(ex, ey));
+
+var bgtIcon = L.divIcon({
+  className:'dot-bgt',
+  iconSize:[12,12],
+  iconAnchor:[6,6]
+});
+
+L.marker(p1, {icon:bgtIcon}).addTo(map).bindPopup('BGT start');
+L.marker(p2, {icon:bgtIcon}).addTo(map).bindPopup('BGT eind');
+
+L.polyline([p1, p2], {
+  color:'#e63946',
+  weight:5
+}).addTo(map);
+
+var bounds = L.latLngBounds([p1, p2]);
+map.fitBounds(bounds, {padding:[60,60], maxZoom:22});
+
+document.getElementById("info").innerHTML =
+  "<b>" + adres + "</b>";
+
+</script>
+
+</body>
+</html>
