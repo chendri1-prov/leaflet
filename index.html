@@ -132,7 +132,7 @@ var map = L.map('map', {
   "PDOK Topo": pdok,
   "ESRI Topo": esri,
   "Luchtfoto": luchtfoto
-};
+};.addTo(map);
 
 L.control.layers(baseMaps).addTo(map);
 
