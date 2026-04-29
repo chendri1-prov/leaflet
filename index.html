@@ -108,7 +108,7 @@ var pdok = L.tileLayer(
 var esri = L.tileLayer(
   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
   {
-    maxZoom: 22,
+    maxZoom: 20,
     attribution: '© Esri'
   }
 );
@@ -122,7 +122,7 @@ var luchtfoto = L.tileLayer(
 );
 
 var map = L.map('map', {
-  layers: [esri]
+  layers: [pdok]
 }).setView([52.1, 5.1], 10);
 
 /* =========================
