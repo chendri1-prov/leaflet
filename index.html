@@ -114,15 +114,15 @@ var esri = L.tileLayer(
 );
 
 var luchtfoto = L.tileLayer(
-  'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.jpeg',
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
   {
-    maxZoom: 22,
-    attribution: '© PDOK / Kadaster'
+    maxZoom: 19,
+    attribution: '© Esri'
   }
 );
 
 var map = L.map('map', {
-  layers: [pdok]
+  layers: [esri]
 }).setView([52.1, 5.1], 10);
 
 /* =========================
@@ -130,7 +130,8 @@ var map = L.map('map', {
 ========================= */
   var baseMaps = {
   "PDOK Topo": pdok,
-  "ESRI Topo": esri
+  "ESRI Topo": esri,
+  "Luchtfoto": luchtfoto
 };
 
 L.control.layers(baseMaps).addTo(map);
