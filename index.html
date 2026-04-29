@@ -46,9 +46,10 @@
     .arrow-icon {
       width:0;
       height:0;
-      border-left:8px solid transparent;
-      border-right:8px solid transparent;
+      border-left:7px solid transparent;
+      border-right:7px solid transparent;
       border-top:14px solid #e63946;
+      transform: rotate(90deg);
     }
 
     .label {
@@ -96,15 +97,43 @@ if ([sx, sy, ex, ey].some(v => isNaN(v))) {
    MAP
 ========================= */
 
-var map = L.map('map').setView([52.1, 5.1], 10);
+var pdok = L.tileLayer(
+  'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/standaard/EPSG:3857/{z}/{x}/{y}.png',
+  {
+    maxZoom: 22,
+    attribution: '© PDOK BRT'
+  }
+);
 
-L.tileLayer(
+var esri = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+  {
+    maxZoom: 22,
+    attribution: '© Esri'
+  }
+);
+
+var luchtfoto = L.tileLayer(
   'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.jpeg',
   {
     maxZoom: 22,
     attribution: '© PDOK / Kadaster'
   }
-).addTo(map);
+);
+
+var map = L.map('map', {
+  layers: [pdok]
+}).setView([52.1, 5.1], 10);
+
+/* =========================
+   BASEMAP TOGGLER
+========================= */
+  var baseMaps = {
+  "PDOK Topo": pdok,
+  "ESRI Topo": esri
+};
+
+L.control.layers(baseMaps).addTo(map);
 
 /* =========================
    POINTS
@@ -135,19 +164,6 @@ L.marker(p2, {
 var line = L.polyline([p1, p2], {
   color: '#e63946',
   weight: 4
-}).addTo(map);
-
-/* =========================
-   AFSTAND LABEL
-========================= */
-
-var mid = line.getCenter();
-
-var afstandLabel = L.marker(mid, {
-  icon: L.divIcon({
-    className: 'label',
-    html: lengte + ' m'
-  })
 }).addTo(map);
 
 /* =========================
