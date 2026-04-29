@@ -98,43 +98,43 @@ if ([sx, sy, ex, ey].some(v => isNaN(v))) {
 ========================= */
 
 var pdok = L.tileLayer(
-  'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/standaard/EPSG:3857/{z}/{x}/{y}.png',
-  {
-    maxZoom: 22,
-    attribution: '© PDOK BRT'
-  }
+'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/standaard/EPSG:3857/{z}/{x}/{y}.png',
+{
+  maxZoom: 18,
+  attribution: '© PDOK'
+}
 );
 
-var esri = L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-  {
-    maxZoom: 20,
-    attribution: '© Esri'
-  }
+var esriTopo = L.tileLayer(
+'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+{
+  maxZoom: 19,
+  attribution: '© Esri'
+}
 );
 
-var luchtfoto = L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-  {
-    maxZoom: 19,
-    attribution: '© Esri'
-  }
+var esriSat = L.tileLayer(
+'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+{
+  maxZoom: 19,
+  attribution: '© Esri'
+}
 );
 
+/* MAP INIT */
 var map = L.map('map', {
   layers: [pdok]
 }).setView([52.1, 5.1], 10);
 
-/* =========================
-   BASEMAP TOGGLER
-========================= */
-  var baseMaps = {
+/* SWITCHER */
+L.control.layers(
+{
   "PDOK Topo": pdok,
-  "ESRI Topo": esri,
-  "Luchtfoto": luchtfoto
-};.addTo(map);
-
-L.control.layers(baseMaps).addTo(map);
+  "ESRI Topo": esriTopo,
+  "ESRI Satelliet": esriSat
+},
+{}
+).addTo(map);
 
 /* =========================
    POINTS
