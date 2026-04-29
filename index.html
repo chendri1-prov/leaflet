@@ -95,6 +95,13 @@ var bgt = L.tileLayer(
   }
 );
 
+var luchtfoto = L.tileLayer(
+  'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.jpeg',
+  {
+    maxZoom: 22,
+    attribution: '© PDOK / Kadaster'
+  }
+);
 
 // var googleSat = L.tileLayer(
 //   'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
@@ -127,13 +134,14 @@ var bgt = L.tileLayer(
 
 /* MAP INIT */
 var map = L.map('map', {
-  layers: [bgt]
+  layers: [bgt,luchtfoto]
 }).setView([52.1, 5.1], 10);
 
 /* SWITCHER */
 L.control.layers(
   {
-    "BGT": bgt
+    "Topografie": bgt,
+    "Luchtfot": luchtfoto
   }
 ).addTo(map);
 
@@ -186,7 +194,7 @@ document.getElementById("info").innerHTML = `
 <b>Adres:</b> ${adres}<br>
 <b>Plaats:</b> ${plaats}<br>
 <b>Lengte:</b> ${lengte} m<br>
-<b>Bron:</b> ${bron}<br>
+<b>Barrière:</b> ${bron}<br>
 <b>Betrouwbaarheid:</b> ${score}<br>
 `;
 
