@@ -138,6 +138,7 @@ var arrowIcon = L.divIcon({
 
 /* markers */
 L.marker(p1, {icon: startIcon}).addTo(map).bindPopup('Start meting');
+L.marker(p2, { icon: startIcon }).addTo(map).bindPopup('Einde meting');
 
 /* lijn */
 var line = L.polyline([p1, p2], {
