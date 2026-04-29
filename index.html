@@ -5,9 +5,7 @@
   <title>Kaart viewer</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-polylinedecorator@1.7.0/dist/leaflet.polylineDecorator.min.js"></script>
 
   <style>
     #map { height:100vh; width:100%; }
@@ -42,16 +40,6 @@
       border-radius:50%;
       width:12px;
       height:12px;
-    }
-
-    /* pijltje */
-    .arrow-icon {
-      width:0;
-      height:0;
-      border-left:7px solid transparent;
-      border-right:7px solid transparent;
-      border-top:14px solid #e63946;
-      transform: rotate(90deg);
     }
 
     .label {
@@ -107,6 +95,36 @@ var bgt = L.tileLayer(
   }
 );
 
+
+// var googleSat = L.tileLayer(
+//   'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+//   { maxZoom: 22 }
+// );
+
+// var pdok = L.tileLayer(
+//   'https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/standaard/EPSG:3857/{z}/{x}/{y}.png',
+//   {
+//     maxZoom: 22,
+//     attribution: '© PDOK'
+//   }
+// );
+
+// var esriTopo = L.tileLayer(
+//   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+//   {
+//     maxZoom: 22,
+//     attribution: '© Esri'
+//   }
+// );
+
+// var esriSat = L.tileLayer(
+//   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+//   {
+//     maxZoom: 22,
+//     attribution: '© Esri'
+// }
+// );
+
 /* MAP INIT */
 var map = L.map('map', {
   layers: [bgt]
@@ -131,37 +149,22 @@ var startIcon = L.divIcon({
   className: 'dot-start'
 });
 
-/* EINDE (pijltje) */
-var arrowIcon = L.divIcon({
-  className: 'arrow-icon'
+var endIcon = L.divIcon({
+  className: '',
+  html: '<div style="width:12px;height:12px;background:#e63946;border-radius:50%;border:2px solid white;"></div>',
+  iconSize: [12, 12],
+  iconAnchor: [6, 6]
 });
+
+L.marker(p2, { icon: endIcon }).addTo(map).bindPopup('Einde meting');
 
 /* markers */
 L.marker(p1, {icon: startIcon}).addTo(map).bindPopup('Start meting');
-L.marker(p2, { icon: startIcon }).addTo(map).bindPopup('Einde meting');
 
 /* lijn */
 var line = L.polyline([p1, p2], {
   color: '#e63946',
   weight: 4
-}).addTo(map);
-
-L.polylineDecorator(line, {
-  patterns: [
-    {
-      offset: '50%',
-      repeat: 0,
-      symbol: L.Symbol.arrowHead({
-        pixelSize: 12,
-        polygon: true,
-        pathOptions: {
-          color: '#e63946',
-          fillOpacity: 1,
-          weight: 2
-        }
-      })
-    }
-  ]
 }).addTo(map);
 
 /* =========================
