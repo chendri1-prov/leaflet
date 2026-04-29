@@ -97,14 +97,8 @@ if ([sx, sy, ex, ey].some(v => isNaN(v))) {
    MAP
 ========================= */
 
-// var otm = L.tileLayer(
-//   'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-//   { maxZoom: 22, attribution: '© OpenTopoMap' }
-// );
-// map = L.map('map', { layers: [otm] });
-
 var bgt = L.tileLayer(
-  'https://service.pdok.nl/lv/bgt/wmts/v1_0/achtergrondkaart/EPSG:3857/{z}/{x}/{y}.png',
+  'https://service.pdok.nl/lv/bgt/wmts/v1_0/achtergrondvisualisatie/EPSG:3857/{z}/{x}/{y}.png',
   {
     maxZoom: 23,
     attribution: '© BGT / PDOK'
@@ -149,9 +143,7 @@ var map = L.map('map', {
 /* SWITCHER */
 L.control.layers(
 {
-  "BGT": bgt,
-  "ESRI Topo": esriTopo,
-  "ESRI Satelliet": esriSat
+  "BGT": bgt
 ).addTo(map);
 
 /* =========================
