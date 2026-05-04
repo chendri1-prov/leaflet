@@ -217,7 +217,6 @@ var ex = Number(params.get("ex"));
 var ey = Number(params.get("ey"));
 
 var adres = params.get("adres") || "onbekend";
-var plaats = params.get("plaats") || "-";
 var identificatie = params.get("identificatie") || "onbekend";
 var situatie = params.get("situatie") || "onbekend";
 var lengte = params.get("lengte") || "-";
@@ -344,7 +343,6 @@ document.getElementById("info").innerHTML = `
 <b>Meting</b><br><br>
 
 <b>Adres:</b> ${adres}<br>
-<b>Plaats:</b> ${plaats}<br>
 <b>Identificatie BAG:</b> ${identificatie}<br>
 <b>Situatie:</b> ${situatie}<br>
 <b>Lengte:</b> ${lengte} m<br>
