@@ -267,20 +267,22 @@ var kadastraleKaart = L.tileLayer.wms(
 
 /* MAP INIT */
 var map = L.map('map', {
-  layers: [luchtfoto,bgt,luchtfoto,kadastraleKaart]
+  layers: [luchtfoto,bgt,kadastraleKaart]
 }).setView([52.1, 5.1], 10);
 
 /* SWITCHER */
 L.control.layers(
+  // Basislagen (radio buttons, één tegelijk)
   {
     "Topografie": bgt,
     "Luchtfoto": luchtfoto,
-    "Kadastrale kaart (uitzoomen)": kadastraleKaart,
   },
-  null,
-{ collapsed: false, position: 'topright' }
+  // Overlays (checkboxes, meerdere tegelijk)
+  {
+    "Kadastrale kaart": kadastraleKaart,
+  },
+  { collapsed: false, position: 'topright' }
 ).addTo(map);
-
 /* =========================
    POINTS
 ========================= */
