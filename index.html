@@ -253,16 +253,42 @@ var luchtfoto = L.tileLayer(
   }
 );
 
+// Kadastrale Kaart (vlakken + labels gecombineerd)
+var kadastraleKaart = L.tileLayer.wms(
+  'https://service.pdok.nl/kadaster/kadastralekaart/wms/v5_0',
+  {
+    layers: 'kadastralekaart',
+    format: 'image/png',
+    transparent: true,
+    version: '1.3.0',
+    attribution: '© Kadaster'
+  }
+);
+
+// Kadastrale Percelen (alleen de perceelsvlakken, zonder labels)
+var kadastralePercelen = L.tileLayer.wms(
+  'https://service.pdok.nl/kadaster/kadastralekaart/wms/v5_0',
+  {
+    layers: 'perceel',
+    format: 'image/png',
+    transparent: true,
+    version: '1.3.0',
+    attribution: '© Kadaster'
+  }
+);
+
 /* MAP INIT */
 var map = L.map('map', {
-  layers: [bgt,luchtfoto]
+  layers: [kadastraleKaart,kadastralePercelen,luchtfoto,bgt]
 }).setView([52.1, 5.1], 10);
 
 /* SWITCHER */
 L.control.layers(
   {
     "Topografie": bgt,
-    "Luchtfoto": luchtfoto
+    "Luchtfoto": luchtfoto,
+    "Kad. kaart": kadastraleKaart,
+    "Kad. ercelen": kadastralePercelen,
   },
   null,
 { collapsed: false, position: 'topright' }
