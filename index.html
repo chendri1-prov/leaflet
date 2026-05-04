@@ -7,9 +7,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Leaflet.measurecontrol -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.measurecontrol@0.2.1/leaflet.measurecontrol.css" />
-  <script src="https://unpkg.com/leaflet.measurecontrol@0.2.1/leaflet.measurecontrol.js"></script>
+  <!-- leaflet-measure -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-measure@3.1.0/dist/leaflet-measure.css" />
+  <script src="https://unpkg.com/leaflet-measure@3.1.0/dist/leaflet-measure.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -177,18 +177,7 @@
 
     /* ── Meettooltje stijl aanpassingen ── */
     .leaflet-control-measure {
-      margin-top: 5px !important; /* kleine ruimte onder de +/- knoppen */
-    }
-
-    .leaflet-control-measure a {
-      border-radius: 4px !important;
-      font-size: 16px !important;
-      line-height: 26px !important;
-    }
-
-    /* Popup met meetresultaat netjes maken */
-    .leaflet-measure-resultpopup {
-      font-size: 12px;
+      margin-top: 5px !important;
     }
   </style>
 </head>
@@ -300,20 +289,16 @@ L.control.layers(
 
 /* =========================
    MEETTOOLTJE
-   Onder de +/- knoppen (topleft),
-   alleen meters, geen mijlen/yards
+   Onder de +/- knoppen (topleft), alleen meters
 ========================= */
-L.control.measure({
+new L.Control.Measure({
   position: 'topleft',
   primaryLengthUnit: 'meters',
-  secondaryLengthUnit: undefined,    // geen tweede eenheid tonen
+  secondaryLengthUnit: undefined,
   primaryAreaUnit: 'sqmeters',
   secondaryAreaUnit: undefined,
   activeColor: '#1b143c',
-  completedColor: '#e63946',
-  localization: 'nl',
-  decPoint: ',',
-  thousandsSep: '.'
+  completedColor: '#e63946'
 }).addTo(map);
 
 /* =========================
